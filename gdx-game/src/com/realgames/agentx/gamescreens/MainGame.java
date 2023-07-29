@@ -17,6 +17,9 @@ public class MainGame implements Screen,InputProcessor
 	OrthographicCamera camera;
 	boolean isPlaying;
 	boolean isPaused;
+	Texture background;
+	TextureRegion upfloor;
+	TextureRegion downfloor;
 	@Override
 	public boolean keyDown(int p1)
 	{
@@ -79,6 +82,11 @@ public class MainGame implements Screen,InputProcessor
 		Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(background,0,0,camera.viewportWidth,camera.viewportHeight);
+		gameAct(batch);
+		batch.end();
 	}
 
 	@Override
@@ -93,6 +101,9 @@ public class MainGame implements Screen,InputProcessor
 		batch=new SpriteBatch();
 		camera=new OrthographicCamera();
 		configureCamera();
+		background=game.textures.get(0);
+		upfloor=new TextureRegion(game.textures.get(1),game.textures.get(1).getWidth()/3,0,game.textures.get(1).getWidth()/3,game.textures.get(1).getHeight()/3);
+		downfloor=new TextureRegion(game.textures.get(1),game.textures.get(1).getWidth()/3,game.textures.get(1).getHeight()/3,game.textures.get(1).getWidth()/3,game.textures.get(1).getHeight()/3);
 		Gdx.input.setInputProcessor(this);
 		// TODO: Implement this method
 	}
@@ -122,12 +133,15 @@ public class MainGame implements Screen,InputProcessor
 	}
 	private void configureCamera(){
 		if (Gdx.graphics.getHeight() < Gdx.graphics.getWidth())
-			camera.setToOrtho(false, 800, 800 * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+			camera.setToOrtho(false, 1600, 1600 * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
 		else
-			camera.setToOrtho(false, 800 * Gdx.graphics.getWidth() / Gdx.graphics.getHeight(), 800);
+			camera.setToOrtho(false, 1600 * Gdx.graphics.getWidth() / Gdx.graphics.getHeight(), 1600);
 	}
-	void gameAct(){
-		
+	void gameAct(Batch batch){
+		for(int i=0;i<30;i++){
+			batch.draw(upfloor,i*100,100,100,100);
+			batch.draw(downfloor,i*100,0,100,100);
+		}
 	}
 	void gameRules(){
 		//motion animation
