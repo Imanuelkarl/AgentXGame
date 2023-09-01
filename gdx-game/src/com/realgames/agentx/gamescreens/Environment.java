@@ -64,9 +64,17 @@ public class Environment
 		return enemies;
 	}
 
-	public void createCoins(ArrayList<SpriteObjects> coins)
+	public void createCoins(float x,float y)
 	{
-		this.coins = coins;
+		for(int i=0;i<3;i++){
+			SpriteObjects coin =new SpriteObjects(texture.get(myIds.COINS1));
+			coin.setRegion(0,0,coin.getTexture().getWidth(),coin.getTexture().getHeight());
+			coin.addAnimation(texture.get(myIds.COIN_ANIMATED),5,2,0.047f);
+			coin.setBounds(x+i*90,y,70,70);
+			coins.add(coin);
+		}
+		
+		
 	}
 
 	public ArrayList<SpriteObjects> getCoins()
@@ -79,7 +87,7 @@ public class Environment
 		tile3.setBounds(x,y,500,150);
 		this.tiles.add(tile3);
 	}
-	public void display(Batch batch,Camera camera){
+	public void display(Batch batch,Camera camera,float time){
 		batch.draw(texture.get(myIds.BACKGROUNG1),(listID*camera.viewportWidth),0,camera.viewportWidth,camera.viewportHeight);
 		if(id!=2){
 		batch.draw(texture.get(myIds.TREE1),listID*camera.viewportWidth+300,220,600,600);
@@ -87,6 +95,10 @@ public class Environment
 		}
 		for(Sprite tile:tiles){
 			tile.draw(batch);
+		}
+		for(SpriteObjects coin: coins){
+			coin.playAnimation(0,time,batch);
+			
 		}
 	}
 	public void createSpace(int id){
@@ -98,6 +110,10 @@ public class Environment
 					for(int j=0;j<10;j++){
 						createTiles((listID*2000)+i*100,120,1,0);
 						createTiles((listID*2000)+i*100,0,1,2);
+						
+					}
+					if(i<4){
+						createCoins(listID*2000+i*500+125,300);
 					}
 				}
 				break;
@@ -114,8 +130,21 @@ public class Environment
 			case 3:
 				for(int i=0;i<size;i++){
 					for(int j=0;j<10;j++){
+						createTiles((listID*2000)+i*100,120,1,0);
+						createTiles((listID*2000)+i*100,0,1,2);
+						if(i>5&&i<9){
+							createTiles((listID*2000)+i*100,360,1,0);
+							createTiles((listID*2000)+i*100,240,1,2);
+							
+						}
+						if(i>15&&i<19){
+							createTiles((listID*2000)+i*100,360,1,0);
+							createTiles((listID*2000)+i*100,240,1,2);
+
+						}
 						
 					}
+					
 				}
 				break;
 			case 4:

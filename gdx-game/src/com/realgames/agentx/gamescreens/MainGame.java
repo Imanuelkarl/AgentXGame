@@ -36,6 +36,9 @@ public class MainGame implements Screen,InputProcessor
 	float time=0;
 	float gravity;
 	boolean falling;  
+	boolean run;
+	boolean touching;
+	Sprite intersect=new Sprite();
 	int speed=500;
 	int initial=speed;
 	ArrayList<Environment> mySpace =new ArrayList<>();
@@ -67,9 +70,10 @@ public class MainGame implements Screen,InputProcessor
 	public boolean touchDown(int p1, int p2, int p3, int p4)
 	{
 		// TODO: Implement this method
-		gravity=1500;
-		falling=false;
-	
+		if(touching){
+			gravity=1500;
+		}
+		touching=false;
 		return true;
 		
 	}
@@ -119,7 +123,8 @@ public class MainGame implements Screen,InputProcessor
 		coin.setBounds(camera.position.x+camera.viewportWidth/2-350,camera.position.y+camera.viewportHeight/2-120,100,100);
 		coinbar.setBounds(camera.position.x+camera.viewportWidth/2-300,camera.position.y+camera.viewportHeight/2-90,280,50);
 
-		player.setX(player.getX()+Gdx.graphics.getDeltaTime()*speed);
+		
+		
 		player.setY(player.getY()+Gdx.graphics.getDeltaTime()*gravity);
 		gameRules();
 		coinbar.draw(batch);
@@ -131,7 +136,10 @@ public class MainGame implements Screen,InputProcessor
 		downbutton.draw(batch);
 		upbutton.draw(batch);
 		batch.end();
-		camera.translate(Gdx.graphics.getDeltaTime()*speed,0);
+		if(run){
+			player.setX(player.getX()+Gdx.graphics.getDeltaTime()*speed);
+			camera.translate(Gdx.graphics.getDeltaTime()*speed,0);
+		}
 	}
 
 	@Override
@@ -147,6 +155,7 @@ public class MainGame implements Screen,InputProcessor
 		camera=new OrthographicCamera();
 		configureCamera();
 		gravity=00;
+		run=true;
 		background=game.textures.get(0);
 		platform=new TextureRegion(game.textures.get(11),0,0,game.textures.get(11).getWidth(),game.textures.get(11).getHeight());
 		upfloor=new TextureRegion(game.textures.get(1),game.textures.get(1).getWidth()/3,0,game.textures.get(1).getWidth()/3,game.textures.get(1).getHeight()/3);
@@ -213,6 +222,7 @@ public class MainGame implements Screen,InputProcessor
 			camera.setToOrtho(false, 2000 * Gdx.graphics.getWidth() / Gdx.graphics.getHeight(), 2000);
 	}
 	public void gameAct(Batch batch){
+		
 		for(int i=0;i<3;i++){
 			life.get(i).setBounds(camera.position.x-camera.viewportWidth/2+20+i*100,camera.position.y+camera.viewportHeight/2-100,70,70);
 		}
@@ -220,16 +230,11 @@ public class MainGame implements Screen,InputProcessor
 			createEnvironment();
 		}
 		for(int i=0;i<mySpace.size();i++){
-			mySpace.get(i).display(batch,camera);
+			mySpace.get(i).display(batch,camera,time);
 			if(mySpace.get(i).listID*2000+4000<camera.position.x-camera.viewportWidth/2){
 				mySpace.remove(i);
 			}
 		}
-		batch.draw(platform,200,800,400,120);
-		batch.draw(platform,800,800,400,120);
-		batch.draw(platform,1400,800,400,120);
-		batch.draw(platform,500,500,400,120);
-		batch.draw(platform,1100,500,400,120);
 		
 		player.playAnimation(time,batch);
 		
@@ -239,7 +244,15 @@ public class MainGame implements Screen,InputProcessor
 		Environment myEnviron =new Environment();
 		myEnviron.setTexture(game.textures);
 		myEnviron.listID=lid;
-		myEnviron.createSpace(getRandom(1,2));
+		int spas=1;
+		if(mySpace.size()==0){
+			spas=1;
+		}
+		else{
+			spas=getRandom(1,3);
+		}
+		
+		myEnviron.createSpace(spas);
 		mySpace.add(myEnviron);
 		lid++;
 	}
@@ -255,10 +268,20 @@ public class MainGame implements Screen,InputProcessor
 					til=tile;
 					gravity=0;
 					falling=false;
+					touching=true;
 				}
 				else {
 					falling=true;
+					
 				}
+				if(player.getFront().overlaps(tile.getBoundingRectangle())){
+					run=false;
+					intersect=tile;
+				}
+				if(!player.getFront().overlaps(intersect.getBoundingRectangle())){
+					run=true;
+				}
+			
 			}
 		}
 		//button inputs
