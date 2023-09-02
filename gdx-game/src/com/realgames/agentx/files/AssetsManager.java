@@ -7,7 +7,7 @@ public class AssetsManager
 {
 	ArrayList<Texture> myTextures=new ArrayList<Texture>();
 	public ArrayList<Texture> loadAssets(){
-		myTextures.add(new Texture(Gdx.files.internal("background/background6.png")));
+		myTextures.add(new Texture(Gdx.files.internal("background/bg2.png")));
 		myTextures.add(new Texture(Gdx.files.internal("background/floor6.png")));
 		myTextures.add(new Texture(Gdx.files.internal("buttons/coin_board.png")));
 		myTextures.add(new Texture(Gdx.files.internal("buttons/up_btn.png")));
@@ -21,6 +21,8 @@ public class AssetsManager
 		myTextures.add(new Texture(Gdx.files.internal("background/ptiles1.png")));
 		myTextures.add(new Texture(Gdx.files.internal("background/tree1.png")));
 		myTextures.add(new Texture(Gdx.files.internal("buttons/coin_spin.png")));
+		myTextures.add(new Texture(Gdx.files.internal("text_font.png")));
+		
 		return myTextures;
 	}
 }

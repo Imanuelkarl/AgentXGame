@@ -7,6 +7,8 @@ import java.util.*;
 import com.realgames.agentx.gameobjects.*;
 import com.realgames.agentx.gameobjects.gamecharacter.*;
 import com.realgames.agentx.files.*;
+import com.badlogic.gdx.assets.*;
+import com.badlogic.gdx.audio.*;
 
 public class MainGame implements Screen,InputProcessor
 {
@@ -15,6 +17,8 @@ public class MainGame implements Screen,InputProcessor
 	}
 	public MainGame(MyGame game){
 		this.game=game;
+		scree=1;
+		gameover=false;
 	}
 	MyGame game;
 	SpriteBatch batch;
@@ -25,6 +29,8 @@ public class MainGame implements Screen,InputProcessor
 	TextureRegion upfloor;
 	TextureRegion midfloor;
 	TextureRegion platform;
+	TextDisplay writer;
+	boolean gameover=false;
 	Sprite upbutton;
 	Sprite downbutton;
 	Sprite health;
@@ -33,6 +39,8 @@ public class MainGame implements Screen,InputProcessor
 	Sprite til=new Sprite();
 	Players player;
 	int lid=0;
+	int coinscore=0;
+	int scree=1;
 	float time=0;
 	float gravity;
 	boolean falling;  
@@ -41,6 +49,7 @@ public class MainGame implements Screen,InputProcessor
 	Sprite intersect=new Sprite();
 	int speed=500;
 	int initial=speed;
+	Music backgroundMusic;
 	ArrayList<Environment> mySpace =new ArrayList<>();
 	ArrayList<Sprite> life=new ArrayList<>();
 	TextureRegion downfloor;
@@ -129,6 +138,7 @@ public class MainGame implements Screen,InputProcessor
 		gameRules();
 		coinbar.draw(batch);
 		coin.draw(batch);
+		writer.write(batch,""+coinscore,coinbar.getX()+coinbar.getWidth()/4,coinbar.getY());
 		for(Sprite hp:life){
 			hp.draw(batch);
 		}
@@ -154,8 +164,13 @@ public class MainGame implements Screen,InputProcessor
 		batch=new SpriteBatch();
 		camera=new OrthographicCamera();
 		configureCamera();
+		writer=new TextDisplay();
 		gravity=00;
 		run=true;
+		AssetManager assetManager = new AssetManager();
+		assetManager.load("background_music.mp3", Music.class);
+		assetManager.finishLoading();
+		backgroundMusic = assetManager.get("background_music.mp3", Music.class);
 		background=game.textures.get(0);
 		platform=new TextureRegion(game.textures.get(11),0,0,game.textures.get(11).getWidth(),game.textures.get(11).getHeight());
 		upfloor=new TextureRegion(game.textures.get(1),game.textures.get(1).getWidth()/3,0,game.textures.get(1).getWidth()/3,game.textures.get(1).getHeight()/3);
@@ -185,8 +200,11 @@ public class MainGame implements Screen,InputProcessor
 		downbutton=new Sprite(game.textures.get(4));
 		upbutton.setRegion(0,0,game.textures.get(4).getWidth(),game.textures.get(4).getWidth());
 		createEnvironment();
-		
+		writer.setFont(game.textures.get(TextureIds.FONTS1));
+		writer.setFontSize(50);
 		Gdx.input.setInputProcessor(this);
+		backgroundMusic.setLooping(true);
+		backgroundMusic.play();
 		// TODO: Implement this method
 	}
 
@@ -277,14 +295,47 @@ public class MainGame implements Screen,InputProcessor
 				if(player.getFront().overlaps(tile.getBoundingRectangle())){
 					run=false;
 					intersect=tile;
+					gameover=true;
+					if(gameover){
+						gameover();
+					}
+						
+					
+			
 				}
 				if(!player.getFront().overlaps(intersect.getBoundingRectangle())){
 					run=true;
 				}
-			
+				if(player.getY()<0){
+					if (backgroundMusic.isPlaying()) {
+						backgroundMusic.stop();
+					}
+					gameover();
+				}
+				
+			}
+			for(SpriteObjects coin: home.getCoins()){
+				if(player.getBoundingRectangle().overlaps(coin.getBoundingRectangle())){
+					if(coin.isActive()){
+						coinscore++;
+						coin.setActive(false);
+					}
+					
+				}
 			}
 		}
 		//button inputs
+	}
+	public void gameover(){
+		backgroundMusic.dispose();
+		backgroundMusic.stop();
+		
+		if(scree==1){
+			game.setScreen(new MainGame(game));
+			scree++;
+		}
+		
+		
 	}
 	public int getRandom(int _min, int _max) {
 		Random random = new Random();

@@ -8,14 +8,26 @@ import com.badlogic.gdx.graphics.g3d.*;
 public class SpriteObjects extends Sprite
 {
 	Model model;
+	boolean active;
 	public SpriteObjects(Texture texture){
 		super(texture);
 		this.setTexture(texture);
+		active=true;
 	}
 	public SpriteObjects(){
-		
+		active=true;
 	}
 	ArrayList<Animation> motions=new ArrayList<>();
+
+	public void setActive(boolean active)
+	{
+		this.active = active;
+	}
+
+	public boolean isActive()
+	{
+		return active;
+	}
 	public void addAnimation(Texture walkSheet,int columns,int rows,int frames,float speed){
         TextureRegion[][] tmp = TextureRegion.split(walkSheet, walkSheet.getWidth() / columns, walkSheet.getHeight() / rows);
         TextureRegion[] walkFrames = new TextureRegion[frames];
@@ -42,7 +54,10 @@ public class SpriteObjects extends Sprite
 	public void playAnimation(int id,float time,Batch batch){
 		if(motions.size()>0&&motions.size()>id){
 			setRegion(motions.get(id).getKeyFrame(time,true));
-			draw(batch);
+			if(isActive()){
+				draw(batch);
+			}
+			
 		}
 	}
 	public void playAnimation(float time,Batch batch){

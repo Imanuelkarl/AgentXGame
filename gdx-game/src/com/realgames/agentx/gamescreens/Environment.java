@@ -120,11 +120,15 @@ public class Environment
 			case 2:
 				for(int i=0;i<size;i++){
 					for(int j=0;j<10;j++){
-						if(i==3||i==12){
+						if(i==3||i==13){
 							createPlatform(listID*2000+i*100,400);
 							
 						}
 					}
+					if(i==4||i==14){
+						createCoins(listID*2000+i*500+125,460);
+					}
+					
 				}
 				break;
 			case 3:
@@ -133,18 +137,23 @@ public class Environment
 						createTiles((listID*2000)+i*100,120,1,0);
 						createTiles((listID*2000)+i*100,0,1,2);
 						if(i>5&&i<9){
-							createTiles((listID*2000)+i*100,360,1,0);
-							createTiles((listID*2000)+i*100,240,1,2);
+							createTiles((listID*2000)+i*100,340,1,0);
+							createTiles((listID*2000)+i*100,220,1,2);
 							
 						}
 						if(i>15&&i<19){
-							createTiles((listID*2000)+i*100,360,1,0);
-							createTiles((listID*2000)+i*100,240,1,2);
+							createTiles((listID*2000)+i*100,340,1,0);
+							createTiles((listID*2000)+i*100,220,1,2);
 
 						}
 						
 					}
-					
+					if(i==5){
+						createCoins(listID*2000+i*500+125,400);
+					}
+					if(i==15){
+						createCoins(listID*2000+i*500+125,400);
+					}
 				}
 				break;
 			case 4:

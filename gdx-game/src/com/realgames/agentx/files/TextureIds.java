@@ -19,5 +19,5 @@ public interface TextureIds
 	public final int GRASSPLATFORM1=11;
 	public final int TREE1=12;
 	public final int COIN_ANIMATED=13;
-	
+	public final int FONTS1=14;
 }
